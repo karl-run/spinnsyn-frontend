@@ -13,7 +13,6 @@ import {
     julesoknadPerson,
     kombinasjonPerson,
     kunArbedisgiverPerioder,
-    kunDirektePerson,
     revurdertOgAnnullert,
     skjonnsfastsattRiktigAarsinntektPersona,
     skjønnsfastsattBrukerutbetalingPerson,
@@ -24,6 +23,9 @@ import {
     under2gInntekt,
     utenData,
     vedtakMed0UtbetalingPerson,
+    delvisAvvistVedtakPerson,
+    direkteOgRefusjon,
+    ingenVedtakPerson,
     vedtakMedNullOmregnetAarsinngtekt,
 } from './data/personas/personas'
 
@@ -62,12 +64,18 @@ export type PersonaKey =
 
 export type PersonaData = Partial<Record<PersonaKey, Persona>>
 
-export type PersonaGroupKey = 'mottaker' | 'avvist-delvis-innvilget' | 'vedtak-innhold' | 'testing'
+export type PersonaGroupKey =
+    | 'mottaker'
+    | 'avvist-delvis-innvilget'
+    | 'vedtak-innhold'
+    | 'testing'
+    | 'ingen-vedtak'
+    | 'vedtak-avslag'
 type PersonaGroup = Record<PersonaGroupKey, PersonaData>
 
 export const testpersonerGruppert: PersonaGroup = {
     ['mottaker']: {
-        ['kun-direkte']: jsonDeepCopy(kunDirektePerson),
+        ['kun-direkte']: jsonDeepCopy(direkteOgRefusjon),
         ['et-vedtak-flere-arbeidsgivere']: jsonDeepCopy(etVedtakFlereArbeidsgivere),
         ['kombinasjon']: jsonDeepCopy(kombinasjonPerson),
     },
@@ -96,6 +104,15 @@ export const testpersonerGruppert: PersonaGroup = {
         ['revurdert-og-annullert']: jsonDeepCopy(revurdertOgAnnullert),
         ['skjonnsfastsatt-riktig-aarsinntekt']: jsonDeepCopy(skjonnsfastsattRiktigAarsinntektPersona),
         ['null-omregnet-aarsinntekt']: jsonDeepCopy(vedtakMedNullOmregnetAarsinngtekt),
+    },
+    ['vedtak-avslag']: {
+        ['kun-direkte']: jsonDeepCopy(direkteOgRefusjon),
+        ['delvis-og-helt-avviste-vedtak']: jsonDeepCopy(forLavInntektPerson),
+        ['alle-avviste-dager']: jsonDeepCopy(delvisAvvistVedtakPerson),
+        ['skjonnsfastsatt-brukerutbetaling']: jsonDeepCopy(skjønnsfastsattBrukerutbetalingPerson),
+    },
+    ['ingen-vedtak']: {
+        ['uten-data']: jsonDeepCopy(ingenVedtakPerson),
     },
 }
 
