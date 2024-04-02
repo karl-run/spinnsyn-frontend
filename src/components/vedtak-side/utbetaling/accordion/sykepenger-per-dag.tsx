@@ -14,9 +14,10 @@ interface SykepengerPerDagProps {
 }
 
 export const AlleSykepengerPerDag = ({ vedtak }: VedtakProps) => {
-    const erDirekteutbetaling = vedtak.sykepengebelopPerson > 0
-    const erRefusjon = vedtak.sykepengebelopArbeidsgiver > 0
-    const erBegge = erDirekteutbetaling && erRefusjon
+    // TODO: Det må verifiseres at 'length' fungerer i stedet for utbetalingssum.
+    const harDagerMedPersonutbetaling = vedtak.dagerPerson.length > 0
+    const harDagerMedRefusjon = vedtak.dagerArbeidsgiver.length > 0
+    const erBegge = harDagerMedPersonutbetaling && harDagerMedRefusjon
     const ingenNyArbeidsgiverperiode = vedtak.vedtak.tags?.includes('IngenNyArbeidsgiverperiode') || false
     if (erBegge) {
         return (
@@ -34,10 +35,10 @@ export const AlleSykepengerPerDag = ({ vedtak }: VedtakProps) => {
             </>
         )
     }
-    if (erDirekteutbetaling) {
+    if (harDagerMedPersonutbetaling) {
         return <SykepengerPerDag dager={vedtak.dagerPerson} ingenNyArbeidsgiverperiode={ingenNyArbeidsgiverperiode} />
     }
-    if (erRefusjon) {
+    if (harDagerMedRefusjon) {
         return (
             <SykepengerPerDag
                 dager={vedtak.dagerArbeidsgiver}
@@ -45,7 +46,7 @@ export const AlleSykepengerPerDag = ({ vedtak }: VedtakProps) => {
             />
         )
     }
-    return <SykepengerPerDag dager={vedtak.dagerArbeidsgiver} ingenNyArbeidsgiverperiode={ingenNyArbeidsgiverperiode} />
+    return null
 }
 
 export const SykepengerPerDag = ({ tittel, dager, ingenNyArbeidsgiverperiode }: SykepengerPerDagProps) => {
@@ -54,7 +55,7 @@ export const SykepengerPerDag = ({ tittel, dager, ingenNyArbeidsgiverperiode }: 
     if (dager.length == 0) return null
 
     return (
-        <Accordion.Item data-cy="sykepenger-per-dag" defaultOpen={isServer}>
+        <Accordion.Item defaultOpen={isServer}>
             <Accordion.Header>
                 <Heading size="small" level="3">
                     {tittel || 'Dine sykepenger per dag'}
